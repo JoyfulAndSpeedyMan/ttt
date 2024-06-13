@@ -1,0 +1,19 @@
+package com.bolingx.erp.service;
+
+import com.bolingx.erp.dto.user.ModifyUserInfoDto;
+import com.bolingx.erp.entity.UserEntity;
+
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author p
+ * @since 2024-05-06
+ */
+public interface UserService {
+
+    UserEntity selectById(Long id);
+
+    void modifyInfo(UserEntity userEntity, ModifyUserInfoDto modifyUserInfoDto);
+}

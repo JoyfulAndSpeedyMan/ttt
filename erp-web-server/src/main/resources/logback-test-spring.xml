@@ -1,0 +1,15 @@
+<configuration scan="true" scanPeriod="30 seconds">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="LOG_FILE" value="logs/stdout.log"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+    <root level="info">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <logger name="com.matugang.nameanalyse" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <!--    <logger name="org.mybatis" level="debug" >-->
+    <!--        <appender-ref ref="CONSOLE" />-->
+    <!--    </logger>-->
+</configuration>

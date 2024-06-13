@@ -1,0 +1,21 @@
+server:
+  port: 8080
+  error:
+    path: /error
+spring:
+  application:
+    name: name-analyse
+  main:
+    web-application-type: servlet
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/erp
+    username: root
+    password: 123456
+
+debug-config:
+  cors-all-origin: true
+  enable-detailed-error-messages: true
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl

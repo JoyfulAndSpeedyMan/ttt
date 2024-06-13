@@ -1,4 +1,3 @@
-//import com.bolingx.code.MybatisCodeGenerateTask
 
 plugins {
     id("com.bolingx.spring-boot-application")
@@ -23,11 +22,10 @@ repositories {
 }
 
 dependencies {
-    implementation(platform("com.bolingx:product-platform"))
-
+//    implementation(platform("com.bolingx:product-platform"))
     implementation("com.bolingx:common")
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
+//    implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation("org.apache.commons:commons-lang3")
     implementation("org.apache.commons:commons-collections4")

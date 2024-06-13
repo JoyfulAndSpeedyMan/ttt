@@ -10,7 +10,7 @@ version = "0.0.1"
 javaPlatform.allowDependencies()
 
 dependencies {
-    val springBootVersion = "3.1.6"
+    val springBootVersion = "3.1.12"
 
     api(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
     constraints {

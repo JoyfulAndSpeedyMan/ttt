@@ -1,8 +1,7 @@
 package com.bolingx.erp.mvc.interceptor;
 
 import com.bolingx.common.web.servlet.hepler.ResponseHelper;
-import com.bolingx.erp.pojo.token.UserTokenInfo;
-import com.bolingx.erp.util.Constant;
+import com.bolingx.erp.dto.user.login.UserTokenInfo;
 import com.bolingx.erp.util.user.UserTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,10 +27,10 @@ public class UserTokenVerifyInterceptor implements HandlerInterceptor {
         }
         try {
             UserTokenInfo userTokenInfo = userTokenUtils.parseUserToken(token);
-            if(userTokenInfo.getTokenExpireTime() < System.currentTimeMillis()){
-                responseHelper.writeRes(response, Constant.MESSAGE_CODE_TOKEN_EXPIRED);
-                return false;
-            }
+//            if(userTokenInfo.getTokenExpireTime() < System.currentTimeMillis()){
+//                responseHelper.writeRes(response, Constant.MESSAGE_CODE_TOKEN_EXPIRED);
+//                return false;
+//            }
             request.setAttribute(USER_TOKEN_ATTR_KEY, userTokenInfo);
             return true;
         } catch (Exception e) {

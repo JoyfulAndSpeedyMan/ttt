@@ -1,7 +1,7 @@
 package com.bolingx.erp.util.user;
 
 import com.bolingx.common.encrypt.EncryptUtil;
-import com.bolingx.erp.pojo.token.UserTokenInfo;
+import com.bolingx.erp.dto.user.login.UserTokenInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

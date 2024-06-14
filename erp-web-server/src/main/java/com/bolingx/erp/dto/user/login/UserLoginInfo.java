@@ -15,6 +15,8 @@ public class UserLoginInfo {
 
     private String nickname;
 
+    private Byte tempRole;
+
     private String avatar;
 
     /**
@@ -25,4 +27,5 @@ public class UserLoginInfo {
     private String token;
 
     private Long tokenExpireTime;
+
 }

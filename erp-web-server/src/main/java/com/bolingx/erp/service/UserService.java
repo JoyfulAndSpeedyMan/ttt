@@ -1,6 +1,8 @@
 package com.bolingx.erp.service;
 
+import com.bolingx.common.model.Message;
 import com.bolingx.erp.dto.user.ModifyUserInfoDto;
+import com.bolingx.erp.dto.user.login.UserLoginVo;
 import com.bolingx.erp.entity.UserEntity;
 
 /**
@@ -14,6 +16,10 @@ import com.bolingx.erp.entity.UserEntity;
 public interface UserService {
 
     UserEntity selectById(Long id);
+
+    UserEntity selectByUsername(String username);
+
+    Message<UserLoginVo> loginByUsername(String username, String password);
 
     void modifyInfo(UserEntity userEntity, ModifyUserInfoDto modifyUserInfoDto);
 }

@@ -1,10 +1,10 @@
 package com.bolingx.erp.mvc.resolver;
 
 import com.bolingx.erp.annotation.AutoUser;
+import com.bolingx.erp.dto.user.login.UserTokenInfo;
 import com.bolingx.erp.entity.UserEntity;
 import com.bolingx.erp.exception.user.AutoUserException;
 import com.bolingx.erp.mvc.interceptor.UserTokenVerifyInterceptor;
-import com.bolingx.erp.pojo.token.UserTokenInfo;
 import com.bolingx.erp.service.UserService;
 import jakarta.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

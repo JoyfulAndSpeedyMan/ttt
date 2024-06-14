@@ -1,4 +1,4 @@
-package com.bolingx.erp.pojo.token;
+package com.bolingx.erp.dto.user.login;
 
 
 import lombok.AllArgsConstructor;

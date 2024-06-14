@@ -1,19 +1,18 @@
 package com.bolingx.erp.entity;
 
-import com.alibaba.fastjson2.JSON;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.*;
-
 import java.io.Serial;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.*;
+import com.alibaba.fastjson2.JSON;
 /**
  * <p>
  * 秘钥
  * </p>
  *
  * @author p
- * @since 2024-02-27
+ * @since 2024-6-14
  */
 @Getter
 @Setter

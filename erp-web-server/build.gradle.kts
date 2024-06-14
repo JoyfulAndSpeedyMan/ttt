@@ -47,6 +47,3 @@ tasks.bootJar {
     exclude("logback-test-spring.xml")
     exclude("generator.yml")
 }
-
-
-

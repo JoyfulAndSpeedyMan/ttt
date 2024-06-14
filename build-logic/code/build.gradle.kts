@@ -9,14 +9,14 @@ repositories{
 }
 
 dependencies {
-    implementation(platform("com.bolingx:product-platform"))
+    api(platform("com.bolingx:product-platform"))
 
-    implementation("org.apache.commons:commons-lang3")
-    implementation("org.apache.commons:commons-collections4")
+    api("org.apache.commons:commons-lang3")
+    api("org.apache.commons:commons-collections4")
 
-    implementation("com.baomidou:mybatis-plus-generator")
-    implementation("com.baomidou:mybatis-plus")
-    implementation("org.freemarker:freemarker")
+    api("com.baomidou:mybatis-plus-generator")
+    api("com.baomidou:mybatis-plus")
+    api("org.freemarker:freemarker")
     runtimeOnly("com.mysql:mysql-connector-j")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
 }

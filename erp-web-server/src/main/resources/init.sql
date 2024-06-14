@@ -1,13 +1,15 @@
-create schema erp collate utf8mb4_unicode_ci;
 create table user
 (
     id        bigint                              not null
         primary key,
-    username  varchar(20) charset utf8mb3         null,
+    username  varchar(20)                         null,
+    password  varchar(20)                         null,
     mobile    varchar(20)                         null,
-    nickname  varchar(50) charset utf8mb3         null,
+    nickname  varchar(50)                         null,
     avatar    varchar(255)                        null,
     gender    tinyint                             null comment '性别，0: 未知；1:男性；2:女性',
+
+    temp_role tinyint                             not null comment '临时的角色字段，判断是不是管理员，早晚得去掉',
     create_at timestamp default CURRENT_TIMESTAMP not null,
     update_at timestamp default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP,
     constraint user_name_inx

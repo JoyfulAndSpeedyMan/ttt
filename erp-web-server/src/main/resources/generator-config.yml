@@ -1,0 +1,8 @@
+jdbcUrl: "jdbc:mysql://127.0.0.1:3306/erp"
+username: "root"
+password: "123456"
+tables:
+  - user
+  - app_secret
+
+packageName: "com.bolingx.erp"

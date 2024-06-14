@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.IOException;
 import java.util.List;
 
-@RestControllerAdvice("com.bolingx.erp.controller")
+@RestControllerAdvice({
+        "com.bolingx.erp.controller"
+})
 @Slf4j
 public class GlobalExceptionHandler {
 
@@ -81,28 +83,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({AutoUserException.class})
-    public void autoUserException(ConstraintViolationException e, HttpServletResponse response) throws IOException {
+    public void autoUserException(AutoUserException e, HttpServletResponse response) throws IOException {
         if (debugConfig.isEnableDetailedErrorMessages()) {
             responseHelper.writeRes(response, Message.REQUEST_ERROR, e.getMessage(), 403);
         }
         response.setStatus(403);
     }
-
-//    @ExceptionHandler({ResolverMissUserException.class})
-//    public void resolverMissUserException(ResolverMissUserException e, HttpServletResponse response) throws IOException {
-//        if (debugConfig.isEnableDetailedErrorMessages()) {
-//            responseHelper.writeRes(response, Message.REQUEST_ERROR, e.getMessage(), 403);
-//            return;
-//        }
-//        response.setStatus(403);
-//    }
-//
-//    @ExceptionHandler({AccessDeniedException.class})
-//    public void accessDeniedException(AccessDeniedException e, HttpServletResponse response) throws IOException {
-//        if (debugConfig.isEnableDetailedErrorMessages()) {
-//            responseHelper.writeRes(response, Message.REQUEST_ERROR, e.getMessage(), 403);
-//            return;
-//        }
-//        response.setStatus(403);
-//    }
 }

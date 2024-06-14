@@ -13,7 +13,7 @@ import java.util.List;
  * </p>
  *
  * @author p
- * @since 2024-02-27
+ * @since 2024-6-14
  */
 public interface AppSecretMapper extends BaseMapper<AppSecretEntity> {
     @Select("select * from app_secret where status = #{status}")

@@ -26,4 +26,6 @@ public class UserDetailDto {
      * 默认打码
      */
     private String mobile;
+
+    private Byte tempRole;
 }

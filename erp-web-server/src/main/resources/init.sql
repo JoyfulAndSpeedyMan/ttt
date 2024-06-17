@@ -34,4 +34,39 @@ create index app_key
     on app_secret (app_key);
 
 create index platform_id
-    on app_secret (platform_id)
+    on app_secret (platform_id);
+#
+# create table product
+# (
+#     id        bigint                              not null primary key,
+#     price     decimal comment '商品价格，有多个sku的时会同步第一个sku的价格',
+#     attr      json                                not null comment '商品属性',
+#     create_at timestamp default CURRENT_TIMESTAMP null,
+#     update_at timestamp default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP
+# );
+# create table product_sku
+# (
+#     id         bigint                              not null primary key,
+#     product_id bigint                              not null,
+#     sku_name   varchar(20)                         not null,
+#     price      decimal comment '该sku的价格',
+#     create_at  timestamp default CURRENT_TIMESTAMP null,
+#     update_at  timestamp default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP
+# );
+#
+# create table product_attr_dict
+# (
+#     id              bigint                              not null primary key,
+#     attr_name       varchar(20) comment '属性名字',
+#     type            varchar(10) comment '属性类型',
+#     optional_values json comment '',
+#     create_at       timestamp default CURRENT_TIMESTAMP null,
+#     update_at       timestamp default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP
+# );
+#
+# create table product_category
+# (
+#     id bigint not null primary key,
+#     parent_id bigint not null comment '根级分类是0',
+#
+# )

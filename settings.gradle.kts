@@ -1,5 +1,5 @@
-rootProject.name = "sprite-time"
+rootProject.name = "bolingx-server"
 includeBuild("common")
 includeBuild("platforms")
 includeBuild("build-logic")
-includeBuild("erp-web-server")
+includeBuild("seller-web-server")

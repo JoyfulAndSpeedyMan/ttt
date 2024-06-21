@@ -10,7 +10,7 @@ dependencies {
     constraints {
         api("io.spring.gradle:dependency-management-plugin:1.1.4")
         api("org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:0.9.27")
-        api("org.springframework.boot:org.springframework.boot.gradle.plugin:3.1.12")
+        api("org.springframework.boot:org.springframework.boot.gradle.plugin:3.3.0")
     }
 }
 

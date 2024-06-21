@@ -10,7 +10,7 @@ version = "0.0.1"
 javaPlatform.allowDependencies()
 
 dependencies {
-    val springBootVersion = "3.1.12"
+    val springBootVersion = "3.3.0"
 
     api(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
     constraints {
@@ -29,7 +29,7 @@ dependencies {
         api("com.alibaba:druid:1.2.20")
         api("com.baomidou:mybatis-plus:${mybatisPlusVersion}")
         api("com.baomidou:mybatis-plus-annotation:${mybatisPlusVersion}")
-        api("com.baomidou:mybatis-plus-boot-starter:${mybatisPlusVersion}")
+        api("com.baomidou:mybatis-plus-spring-boot3-starter:${mybatisPlusVersion}")
         api("com.baomidou:mybatis-plus-generator:${mybatisPlusVersion}")
         api("com.baomidou:dynamic-datasource-spring-boot-starter:4.2.0")
 
@@ -38,7 +38,7 @@ dependencies {
 
         // api
         api("org.hibernate.validator:hibernate-validator:8.0.1.Final")
-        api("jakarta.validation:jakarta.validation-api:3.0.2")
+//        api("jakarta.validation:jakarta.validation-api:3.0.2")
     }
 }
 

@@ -57,3 +57,6 @@ publishing {
         }
     }
 }
+tasks.test {
+    useJUnitPlatform()
+}

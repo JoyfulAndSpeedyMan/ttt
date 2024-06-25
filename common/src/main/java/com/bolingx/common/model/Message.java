@@ -18,6 +18,10 @@ public class Message<T> implements Serializable {
 
     public final static String SYSTEM_ERR_CODE = "50000";
 
+    public final static String PASSWD_LOGIN_USER_OR_PASSWD_ERROR = "40100";
+
+    public final static String USER_STATUS_ABNORMAL = "40120";
+
     private String code;
 
     private String msg;

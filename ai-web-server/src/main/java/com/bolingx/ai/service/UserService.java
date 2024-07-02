@@ -4,10 +4,12 @@ import com.bolingx.common.model.Message;
 import com.bolingx.ai.dto.user.ModifyUserInfoDto;
 import com.bolingx.ai.dto.user.login.UserLoginVo;
 import com.bolingx.ai.entity.UserEntity;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author p
@@ -19,7 +21,8 @@ public interface UserService {
 
     UserEntity selectByUsername(String username);
 
-    Message<UserLoginVo> loginByUsername(String username, String password);
+    Message<UserLoginVo> loginByUsername(String username, String password,
+                                         HttpServletRequest request, HttpServletResponse response);
 
     void modifyInfo(UserEntity userEntity, ModifyUserInfoDto modifyUserInfoDto);
 }

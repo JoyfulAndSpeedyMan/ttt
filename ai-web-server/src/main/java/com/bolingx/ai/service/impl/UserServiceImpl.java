@@ -13,10 +13,25 @@ import com.bolingx.ai.mapper.UserMapper;
 import com.bolingx.ai.service.UserService;
 import com.bolingx.ai.util.Constant;
 import com.bolingx.ai.util.user.UserTokenUtils;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +53,22 @@ public class UserServiceImpl implements UserService {
 
     private UserMapper userMapper;
 
-    private UserTokenUtils userTokenUtils;
+    @Resource
+    private SessionAuthenticationStrategy sessionAuthenticationStrategy;
+
+    @Resource
+    private SecurityContextRepository securityContextRepository;
+
+    @Resource
+    private RememberMeServices rememberMeServices;
+
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder
+            .getContextHolderStrategy();
+
+    private ApplicationEventPublisher eventPublisher;
+
+    private final AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource
+            = new WebAuthenticationDetailsSource();
 
     @Override
     public UserEntity selectById(Long id) {
@@ -53,7 +83,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Message<UserLoginVo> loginByUsername(String username, String password) {
+    public Message<UserLoginVo> loginByUsername(String username, String password,
+                                                HttpServletRequest request, HttpServletResponse response) {
         UserEntity userEntity = this.selectByUsername(username);
         if (userEntity == null) {
             return messageHelper.of(Constant.MESSAGE_CODE_USER_OR_PASSWD_ERROR);
@@ -61,21 +92,24 @@ public class UserServiceImpl implements UserService {
         if (!Objects.equals(userEntity.getPassword(), password)) {
             return messageHelper.of(Constant.MESSAGE_CODE_USER_OR_PASSWD_ERROR);
         }
-        UserTokenInfo userToken = userTokenUtils.createUserToken("douyin", userEntity.getId());
-        UserLoginVo userLoginVo = UserLoginVo.builder()
-                .userLoginInfo(
-                        UserLoginInfo.builder()
-                                .username(userEntity.getUsername())
-                                .nickname(userEntity.getNickname())
-                                .tempRole(userEntity.getTempRole())
-                                .avatar(userEntity.getAvatar())
-                                .gender(userEntity.getGender())
-                                .token(userToken.getToken())
-//                                .tokenExpireTime(userToken.getTokenExpireTime())
-                                .build()
-                )
-                .build();
-        return Message.success(userLoginVo);
+        UsernamePasswordAuthenticationToken authentication
+                = UsernamePasswordAuthenticationToken.authenticated(username, password, null);
+        authentication.setDetails(this.authenticationDetailsSource.buildDetails(request));
+        successfulAuthentication(request, response, authentication);
+        return messageHelper.of(Message.SUCCESS_CODE);
+    }
+
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            Authentication authResult) {
+        sessionAuthenticationStrategy.onAuthentication(authResult, request, response);
+        SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
+        context.setAuthentication(authResult);
+        this.securityContextHolderStrategy.setContext(context);
+        this.securityContextRepository.saveContext(context, request, response);
+        this.rememberMeServices.loginSuccess(request, response, authResult);
+        if (this.eventPublisher != null) {
+            this.eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
+        }
     }
 
 
@@ -122,10 +156,5 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setMessageHelper(MessageHelper messageHelper) {
         this.messageHelper = messageHelper;
-    }
-
-    @Autowired
-    public void setUserTokenUtils(UserTokenUtils userTokenUtils) {
-        this.userTokenUtils = userTokenUtils;
     }
 }

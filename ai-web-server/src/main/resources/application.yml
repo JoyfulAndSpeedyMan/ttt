@@ -2,6 +2,10 @@ server:
   port: 8081
   error:
     path: /error
+  servlet:
+    session:
+      cookie:
+        domain: boling-dev.com
 spring:
   application:
     name: name-analyse
@@ -15,9 +19,19 @@ spring:
   threads:
     virtual:
       enabled: true
+  session:
+    redis:
+      host: boling-dev.redis
+      port: 6379
+      database: 0
+
 debug-config:
   cors-all-origin: true
   enable-detailed-error-messages: true
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+security:
+  remember-me-cookie-domain: ${server.servlet.session.cookie.domain}

@@ -6,6 +6,8 @@ import com.bolingx.ai.dto.user.UserDetailDto;
 import com.bolingx.ai.dto.user.login.UserLoginVo;
 import com.bolingx.ai.entity.UserEntity;
 import com.bolingx.ai.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.atomic.LongAdder;
 
 @RestController
 @RequestMapping("/user")
@@ -26,11 +27,9 @@ public class UserController {
 
     private UserService userService;
 
-    private final LongAdder count = new LongAdder();
-
     @PostMapping("/login")
-    public Message<UserLoginVo> login(String username, String password) {
-        return userService.loginByUsername(username, password);
+    public Message<UserLoginVo> login(String username, String password, HttpServletRequest request, HttpServletResponse response) {
+        return userService.loginByUsername(username,password, request, response);
     }
 
     @GetMapping("/detail")
@@ -42,6 +41,7 @@ public class UserController {
         }
         return Message.success(userDetailVo);
     }
+
 
     @GetMapping("/hello")
     public Message<String> hello(){

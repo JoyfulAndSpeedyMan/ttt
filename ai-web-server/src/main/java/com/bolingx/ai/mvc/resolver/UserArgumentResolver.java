@@ -1,14 +1,13 @@
 package com.bolingx.ai.mvc.resolver;
 
 import com.bolingx.ai.annotation.AutoUser;
-import com.bolingx.ai.dto.user.login.UserTokenInfo;
 import com.bolingx.ai.entity.UserEntity;
 import com.bolingx.ai.exception.user.AutoUserException;
-import com.bolingx.ai.mvc.interceptor.UserTokenVerifyInterceptor;
 import com.bolingx.ai.service.UserService;
-import jakarta.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -25,19 +24,19 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        ServletRequest servletRequest = (ServletRequest) webRequest.getNativeRequest();
-
-        UserTokenInfo userTokenInfo = (UserTokenInfo) servletRequest.getAttribute(UserTokenVerifyInterceptor.USER_TOKEN_ATTR_KEY);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         final AutoUser autoUser = parameter.getParameterAnnotation(AutoUser.class);
         assert autoUser != null;
-        if (userTokenInfo == null && autoUser.required()) {
+
+        boolean isLogin = authentication != null && authentication.isAuthenticated();
+        if (!isLogin && autoUser.required()) {
             throw new AutoUserException(autoUser.message());
         } else {
-            if (userTokenInfo == null) {
+            if (!isLogin) {
                 return null;
             }
-            UserEntity userEntity = userService.selectById(userTokenInfo.getUid());
+            UserEntity userEntity = userService.selectByUsername((String) authentication.getPrincipal());
             if (userEntity == null) {
                 throw new AutoUserException(autoUser.missUserMessage());
             }

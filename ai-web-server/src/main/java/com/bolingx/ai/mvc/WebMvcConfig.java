@@ -10,7 +10,6 @@ import com.bolingx.common.web.secret.DefaultAppSecretService;
 import com.bolingx.common.web.servlet.filter.RequestValidationConfig;
 import com.bolingx.common.web.servlet.filter.RequestValidationFilter;
 import com.bolingx.common.web.servlet.hepler.ResponseHelper;
-import com.bolingx.ai.mvc.interceptor.UserTokenVerifyInterceptor;
 import com.bolingx.ai.mvc.resolver.UserArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -52,15 +51,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolvers.add(userArgumentResolver());
     }
 
-    @Bean
-    public UserTokenVerifyInterceptor userTokenVerifyInterceptor() {
-        return new UserTokenVerifyInterceptor();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         WebMvcConfigurer.super.addInterceptors(registry);
-        registry.addInterceptor(userTokenVerifyInterceptor());
     }
 
     @Bean

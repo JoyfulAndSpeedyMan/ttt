@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestControllerAdvice({
-        "com.bolingx.erp.controller"
+        "com.bolingx.ai.controller"
 })
 @Slf4j
 public class GlobalExceptionHandler {

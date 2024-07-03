@@ -24,6 +24,15 @@ dependencies {
         // redis
         api("io.lettuce:lettuce-core:6.2.7.RELEASE")
 
+
+        // grpc
+        val grpcVersion ="1.64.0"
+        api("io.grpc:grpc-stub:$grpcVersion")
+        api("io.grpc:grpc-protobuf:$grpcVersion")
+        api("io.grpc:grpc-api:$grpcVersion")
+        api("io.grpc:grpc-netty:$grpcVersion")
+        api("io.grpc:grpc-netty-shaded:$grpcVersion")
+
         // 数据库
         val mybatisPlusVersion = "3.5.5"
         api("com.alibaba:druid:1.2.20")

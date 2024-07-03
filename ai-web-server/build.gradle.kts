@@ -31,6 +31,9 @@ dependencies {
 
     implementation("io.lettuce:lettuce-core")
 
+    implementation("com.bolingx.grpc:core")
+    runtimeOnly("io.grpc:grpc-netty-shaded:1.64.0")
+
     implementation("org.apache.commons:commons-lang3")
     implementation("org.apache.commons:commons-collections4")
     implementation("com.alibaba.fastjson2:fastjson2")

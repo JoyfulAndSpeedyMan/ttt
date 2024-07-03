@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package com.bolingx.ai.worker;
+
+import "google/protobuf/empty.proto";
+
+service AiWorker {
+
+    rpc Register(RegisterRequest) returns (RegisterResponse) {};
+
+    rpc ListenServerRpc (stream ServerRpcCallback) returns (stream ServerRpcReq) {};
+
+    rpc ListenServerCheckStatus (stream WorkerStatus) returns (stream WorkerCheck) {};
+}
+
+message RegisterRequest {
+    int32 version = 1;
+    repeated string processors = 2; // 提供的功能
+    int32 max_parallel = 3; // 最大的并行任务数
+}
+
+message RegisterResponse {
+    string id = 1;
+}
+
+message ServerRpcReq {
+    int64 req_id = 1;
+    string processor_name = 2;
+    string params = 3; // 参数，json格式
+}
+
+message ServerRpcCallback {
+    int32 flag = 1; // 0: 最后一个结果
+    int64 req_id = 2;
+    string data = 3; // 响应数据，json格式
+    bool error = 4; // 是否出错
+    string error_msg = 5; // 错误信息
+}
+
+message WorkerCheck {}
+
+message WorkerStatus {
+    StateOfLife state_of_life = 1;
+}
+
+enum StateOfLife {
+
+    STATE_OF_LIFE_UNSPECIFIED = 0;
+
+    STATE_OF_LIFE_OK = 1;
+
+    STATE_OF_LIFE_OFFLINE = 2;
+}
+

@@ -3,6 +3,7 @@ package com.bolingx.ai.mvc.resolver;
 import com.bolingx.ai.annotation.AutoUser;
 import com.bolingx.ai.entity.UserEntity;
 import com.bolingx.ai.exception.user.AutoUserException;
+import com.bolingx.ai.security.user.UserDetailImpl;
 import com.bolingx.ai.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -36,7 +37,13 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
             if (!isLogin) {
                 return null;
             }
-            UserEntity userEntity = userService.selectByUsername((String) authentication.getPrincipal());
+            Object principal = authentication.getPrincipal();
+            UserEntity userEntity;
+            if(principal instanceof UserDetailImpl detail){
+                userEntity = userService.selectByUsername(detail.getUsername());
+            } else {
+                throw new RuntimeException("未知的身份类型");
+            }
             if (userEntity == null) {
                 throw new AutoUserException(autoUser.missUserMessage());
             }

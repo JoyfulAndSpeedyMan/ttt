@@ -21,6 +21,14 @@ public class MessageHelper {
         return this.of(Message.SUCCESS_CODE, data);
     }
 
+    public Message<?> reqError() {
+        return of(Message.REQUEST_ERROR);
+    }
+
+    public Message<?> sysError() {
+        return of(Message.SYSTEM_ERR_CODE);
+    }
+
     public <T> Message<T> of(String code) {
         return this.of(code, null);
     }

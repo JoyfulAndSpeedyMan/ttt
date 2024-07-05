@@ -18,9 +18,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -54,22 +51,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         WebMvcConfigurer.super.addInterceptors(registry);
-    }
-
-    @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        if(debugConfig.isCorsAllOrigin()) {
-            CorsConfiguration config = new CorsConfiguration();
-            config.addAllowedOriginPattern("*");
-            config.addAllowedHeader("*");
-            config.addAllowedMethod("*");
-            config.setAllowCredentials(true);
-            source.registerCorsConfiguration("/**", config); // CORS 配置对所有接口都有效
-        }
-        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-        bean.setOrder(FILTER_ORDER_CORS);
-        return bean;
     }
 
     @Bean

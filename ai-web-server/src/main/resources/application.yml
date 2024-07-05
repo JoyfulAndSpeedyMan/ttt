@@ -13,17 +13,22 @@ spring:
     web-application-type: servlet
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/erp
+    url: jdbc:mysql://localhost:3306/bolingx_ai
     username: root
     password: 123456
   threads:
     virtual:
       enabled: true
-  session:
+  data:
     redis:
       host: boling-dev.redis
       port: 6379
       database: 0
+  session:
+    redis:
+      host: boling-dev.redis
+      port: 6379
+      database: 1
 
 debug-config:
   cors-all-origin: true

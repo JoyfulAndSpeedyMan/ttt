@@ -3,6 +3,5 @@ username: "root"
 password: "123456"
 tables:
   - user
-  - app_secret
 
-packageName: "com.bolingx.erp"
+packageName: "com.bolingx.ai"

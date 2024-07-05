@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserDetailDto {
 
+    private Long id;
+
     private String username;
 
     private String nickname;
@@ -22,10 +24,11 @@ public class UserDetailDto {
      */
     private Byte gender;
 
+
+    private String email;
+
     /**
      * 默认打码
      */
     private String mobile;
-
-    private Byte tempRole;
 }

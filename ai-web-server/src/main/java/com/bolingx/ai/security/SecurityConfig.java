@@ -3,8 +3,7 @@ package com.bolingx.ai.security;
 import com.bolingx.common.model.Message;
 import com.bolingx.common.model.config.DebugConfig;
 import com.bolingx.common.web.servlet.hepler.ResponseHelper;
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -15,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
@@ -23,32 +21,22 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Resource
     private ResponseHelper responseHelper;
 
-    @Resource
     private DebugConfig debugConfig;
 
     private HttpSecurity httpSecurity;
-
 
     public HttpSecurity httpSecurity(HttpSecurity http,
                                      PersistentTokenRepository tokenRepository,
@@ -59,9 +47,21 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/druid/**")).permitAll()
                         .anyRequest().permitAll()
                 )
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(corsConfigurer -> {
+                    if(debugConfig.isCorsAllOrigin()) {
+                        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                        CorsConfiguration config = new CorsConfiguration();
+                        config.addAllowedOriginPattern("*");
+                        config.addAllowedHeader("*");
+                        config.addAllowedMethod("*");
+                        config.setAllowCredentials(true);
+                        source.registerCorsConfiguration("/**", config); // CORS 配置对所有接口都有效
+                        corsConfigurer.configurationSource(source);
+                    }
+                })
                 .csrf(AbstractHttpConfigurer::disable)
                 .rememberMe(rememberMe -> {
+                    rememberMe.rememberMeParameter("rememberMe");
                     rememberMe.key("rememberMeKey");
                     rememberMe.tokenRepository(tokenRepository);
                     rememberMe.rememberMeCookieDomain(securityProperties.getRememberMeCookieDomain());
@@ -81,32 +81,9 @@ public class SecurityConfig {
                         res.setStatus(HttpStatus.FORBIDDEN.value());
                     });
                 })
+                .logout(logoutConfigurer -> logoutConfigurer.logoutUrl("/user/logout")
+                        .logoutSuccessHandler((req, res, auth) -> responseHelper.writeRes(res, Message.SUCCESS_CODE)))
                 ;
-    }
-
-    private static final class CsrfMatcher implements RequestMatcher {
-
-        private final HashSet<String> allowedMethods = new HashSet<>(Arrays.asList("GET", "HEAD", "TRACE", "OPTIONS"));
-
-        private final Collection<String> ignoreList;
-
-        private CsrfMatcher(Collection<String> ignoreList) {
-            this.ignoreList = ignoreList;
-        }
-
-        @Override
-        public boolean matches(HttpServletRequest request) {
-            if (ignoreList.contains(request.getServletPath())) {
-                return false;
-            }
-            return !this.allowedMethods.contains(request.getMethod());
-        }
-
-        @Override
-        public String toString() {
-            return "CsrfNotRequired " + this.allowedMethods;
-        }
-
     }
 
     @Bean
@@ -121,9 +98,9 @@ public class SecurityConfig {
 
     @Bean
     public PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
-//        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
-//        jdbcTokenRepository.setDataSource(dataSource);
-        return new InMemoryTokenRepositoryImpl();
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
     }
 
     @Bean
@@ -142,5 +119,15 @@ public class SecurityConfig {
     public SecurityContextRepository securityContextRepository() {
         return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(), new HttpSessionSecurityContextRepository());
+    }
+
+    @Autowired
+    public void setResponseHelper(ResponseHelper responseHelper) {
+        this.responseHelper = responseHelper;
+    }
+
+    @Autowired
+    public void setDebugConfig(DebugConfig debugConfig) {
+        this.debugConfig = debugConfig;
     }
 }

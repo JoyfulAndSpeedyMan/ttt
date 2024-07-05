@@ -67,19 +67,21 @@ public class GlobalExceptionHandler {
                 if (objectError instanceof FieldError fieldError) {
                     String field = fieldError.getField();
                     String message = fieldError.getDefaultMessage();
-                    responseHelper.writeRes(response, Message.REQUEST_ERROR, field + ": " + message, 403);
+                    responseHelper.writeRes(response, Message.REQUEST_ERROR, field + ": " + message);
                 }
             }
+            return;
         }
-        response.setStatus(403);
+        responseHelper.writeRes(response, Message.REQUEST_ERROR);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
     public void constraintViolationException(ConstraintViolationException e, HttpServletResponse response) throws IOException {
         if (debugConfig.isEnableDetailedErrorMessages()) {
-            responseHelper.writeRes(response, Message.REQUEST_ERROR, e.getMessage(), 403);
+            responseHelper.writeRes(response, Message.REQUEST_ERROR, e.getMessage());
+            return;
         }
-        response.setStatus(403);
+        responseHelper.writeRes(response, Message.REQUEST_ERROR);
     }
 
     @ExceptionHandler({AutoUserException.class})

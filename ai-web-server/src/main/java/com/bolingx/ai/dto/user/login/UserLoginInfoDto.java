@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserLoginInfo {
+public class UserLoginInfoDto {
+
+    private Long id;
 
     private String username;
 
     private String nickname;
-
-    private Byte tempRole;
 
     private String avatar;
 
@@ -23,9 +23,4 @@ public class UserLoginInfo {
      * 性别，0: 未知；1:男性；2:女性
      */
     private Byte gender;
-
-    private String token;
-
-    private Long tokenExpireTime;
-
 }

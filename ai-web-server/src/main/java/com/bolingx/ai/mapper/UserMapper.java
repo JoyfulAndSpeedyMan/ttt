@@ -2,6 +2,7 @@ package com.bolingx.ai.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.bolingx.ai.entity.UserEntity;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * <p>
@@ -13,4 +14,6 @@ import com.bolingx.ai.entity.UserEntity;
  */
 public interface UserMapper extends BaseMapper<UserEntity> {
 
+    @Update("update user set password = #{password} where id = #{id}")
+    void updatePasswordById(Long id, String password);
 }

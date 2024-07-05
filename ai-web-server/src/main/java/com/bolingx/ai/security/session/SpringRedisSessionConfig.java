@@ -1,6 +1,8 @@
 package com.bolingx.ai.security.session;
 
 import com.bolingx.ai.security.SecurityProperties;
+import com.bolingx.ai.security.user.UserDetailImpl;
+import com.bolingx.ai.security.user.UserDetailImplMixin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.ObjectProvider;
@@ -34,6 +36,7 @@ public class SpringRedisSessionConfig extends RedisHttpSessionConfiguration {
     private ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModules(SecurityJackson2Modules.getModules(this.loader));
+        mapper.addMixIn(UserDetailImpl.class, UserDetailImplMixin.class);
         return mapper;
     }
 

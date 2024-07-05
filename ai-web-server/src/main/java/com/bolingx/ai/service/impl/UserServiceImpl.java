@@ -3,6 +3,7 @@ package com.bolingx.ai.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.bolingx.ai.dto.user.EmailRegisterDto;
 import com.bolingx.ai.dto.user.login.UserLoginInfoDto;
+import com.bolingx.ai.security.user.UserDetailImpl;
 import com.bolingx.ai.util.RedisKeyConstant;
 import com.bolingx.common.exception.MessageBizException;
 import com.bolingx.common.model.Message;
@@ -23,12 +24,15 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
@@ -74,6 +78,10 @@ public class UserServiceImpl implements UserService {
 
     private RedisTemplate<String, Object> redisTemplate;
 
+    private AuthenticationManager authenticationManager;
+
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public UserEntity selectById(Long id) {
         return userMapper.selectById(id);
@@ -81,16 +89,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity selectByUsername(String username) {
-        LambdaQueryWrapper<UserEntity> query = new LambdaQueryWrapper<>();
-        query.eq(UserEntity::getUsername, username);
-        return userMapper.selectOne(query);
+        return userMapper.selectByUsername(username);
     }
 
     @Override
     public UserEntity selectOneByEmail(String email) {
-        LambdaQueryWrapper<UserEntity> query = new LambdaQueryWrapper<>();
-        query.eq(UserEntity::getEmail, email);
-        return userMapper.selectOne(query);
+        return userMapper.selectOneByEmail(email);
     }
 
     @Override
@@ -103,20 +107,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Message<UserLoginInfoDto> loginByUsername(String username, String password,
                                                      HttpServletRequest request, HttpServletResponse response) {
-        UserEntity userEntity = this.selectByUsername(username);
-        if (userEntity == null) {
-            userEntity = this.selectOneByEmail(username);
-        }
-        if (userEntity == null) {
+        Authentication authenticationRequest =
+                UsernamePasswordAuthenticationToken.unauthenticated(username, password);
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(authenticationRequest);
+        } catch (AuthenticationException ex) {
             return messageHelper.of(Constant.MESSAGE_CODE_USER_OR_PASSWD_ERROR);
         }
-        if (!Objects.equals(userEntity.getPassword(), password)) {
-            return messageHelper.of(Constant.MESSAGE_CODE_USER_OR_PASSWD_ERROR);
-        }
-        UsernamePasswordAuthenticationToken authentication
-                = UsernamePasswordAuthenticationToken.authenticated(userEntity.getUsername(), password, null);
-        authentication.setDetails(this.authenticationDetailsSource.buildDetails(request));
         successfulAuthentication(request, response, authentication);
+
+        UserEntity userEntity = selectById(((UserDetailImpl) authentication.getPrincipal()).getId());
         return messageHelper.success(UserLoginInfoDto.builder()
                 .id(userEntity.getId())
                 .username(username)
@@ -204,7 +205,7 @@ public class UserServiceImpl implements UserService {
                 .username(emailRegisterDto.getEmail())
                 .nickname(emailRegisterDto.getNickname())
                 .email(emailRegisterDto.getEmail())
-                .password(emailRegisterDto.getPassword())
+                .password(passwordEncoder.encode(emailRegisterDto.getPassword()))
                 .gender((byte) 0)
                 .build();
         userMapper.insert(userEntity);
@@ -238,7 +239,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private Message<?> validCaptcha(String redisKey, String captcha) {
-        String captcha2 = null;
+        String captcha2;
         try {
             captcha2 = (String) redisTemplate.opsForValue().get(redisKey);
         } catch (Exception e) {
@@ -274,7 +275,7 @@ public class UserServiceImpl implements UserService {
         if ((result = validCaptcha(key, captcha)) != null) {
             return result;
         }
-        userMapper.updatePasswordById(userEntity.getId(), password);
+        userMapper.updatePasswordById(userEntity.getId(), passwordEncoder.encode(password));
         redisTemplate.delete(key);
         return messageHelper.success();
     }
@@ -292,5 +293,20 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
+    }
+
+    @Autowired
+    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
+
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 }

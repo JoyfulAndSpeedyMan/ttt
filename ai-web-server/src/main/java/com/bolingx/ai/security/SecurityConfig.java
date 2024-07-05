@@ -1,5 +1,8 @@
 package com.bolingx.ai.security;
 
+import com.bolingx.ai.mapper.UserMapper;
+import com.bolingx.ai.security.user.UserDetailServiceImpl;
+import com.bolingx.ai.service.UserService;
 import com.bolingx.common.model.Message;
 import com.bolingx.common.model.config.DebugConfig;
 import com.bolingx.common.web.servlet.hepler.ResponseHelper;
@@ -8,10 +11,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
@@ -48,7 +57,7 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .cors(corsConfigurer -> {
-                    if(debugConfig.isCorsAllOrigin()) {
+                    if (debugConfig.isCorsAllOrigin()) {
                         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                         CorsConfiguration config = new CorsConfiguration();
                         config.addAllowedOriginPattern("*");
@@ -95,6 +104,28 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authenticationProvider);
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserMapper userMapper) {
+        UserDetailServiceImpl userDetailService = new UserDetailServiceImpl();
+        userDetailService.setUserMapper(userMapper);
+        return userDetailService;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
 
     @Bean
     public PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
@@ -130,4 +161,6 @@ public class SecurityConfig {
     public void setDebugConfig(DebugConfig debugConfig) {
         this.debugConfig = debugConfig;
     }
+
+
 }

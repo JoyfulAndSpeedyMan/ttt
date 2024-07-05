@@ -3,7 +3,7 @@ create table user
     id        bigint                              not null
         primary key,
     username  varchar(20)                         null,
-    password  varchar(20)                         null,
+    password  varchar(255)                        null,
     email     varchar(50)                         null,
     mobile    varchar(20)                         null,
     nickname  varchar(50)                         null,
@@ -17,7 +17,6 @@ create table user
 );
 create index email_index on user (email);
 create index mobile_index on user (mobile);
-
 create table app_secret
 (
     id          bigint                              not null
@@ -29,8 +28,7 @@ create table app_secret
     status      tinyint                             not null comment '1: 有效',
     create_at   timestamp default CURRENT_TIMESTAMP null,
     update_at   timestamp default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP
-)
-    comment '秘钥' charset = utf8mb4;
+) comment '秘钥' charset = utf8mb4;
 
 create index app_key
     on app_secret (app_key);

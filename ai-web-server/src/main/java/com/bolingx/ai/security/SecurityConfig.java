@@ -2,7 +2,6 @@ package com.bolingx.ai.security;
 
 import com.bolingx.ai.mapper.UserMapper;
 import com.bolingx.ai.security.user.UserDetailServiceImpl;
-import com.bolingx.ai.service.UserService;
 import com.bolingx.common.model.Message;
 import com.bolingx.common.model.config.DebugConfig;
 import com.bolingx.common.web.servlet.hepler.ResponseHelper;

@@ -1,6 +1,5 @@
 package com.bolingx.ai.security.session;
 
-import com.bolingx.ai.security.SecurityProperties;
 import com.bolingx.ai.security.user.UserDetailImpl;
 import com.bolingx.ai.security.user.UserDetailImplMixin;
 import com.fasterxml.jackson.databind.ObjectMapper;

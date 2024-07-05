@@ -107,8 +107,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Message<UserLoginInfoDto> loginByUsername(String username, String password,
                                                      HttpServletRequest request, HttpServletResponse response) {
-        Authentication authenticationRequest =
+        UsernamePasswordAuthenticationToken authenticationRequest =
                 UsernamePasswordAuthenticationToken.unauthenticated(username, password);
+        authenticationRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(authenticationRequest);
